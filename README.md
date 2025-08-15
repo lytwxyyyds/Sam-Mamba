@@ -18,3 +18,12 @@ The proposed SAM-Mamba architecture.
 '''
 ## Test weight paths for the four datasets based on Hiera-B.
 链接: https://pan.baidu.com/s/1IdnAKGMn5Jkc6ARSJzbmeA?pwd=kbq5 提取码: kbq5
+
+## Download path for the VSSM pre-trained model. Place this file in the source directory to enable code translation.
+链接: https://pan.baidu.com/s/1sQJFHiVcmyA0uMikN5_zlw?pwd=26pk 提取码: 26pk
+
+## sam2_hiera_large.pt：
+https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_large.pt
+
+## sam2_hiera_base_plus.pt：
+https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_base_plus.pt
