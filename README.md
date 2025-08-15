@@ -16,3 +16,5 @@ The proposed SAM-Mamba architecture.
 '''
     bash test.sh
 '''
+## Test weight paths for the four datasets based on Hiera-B.
+链接: https://pan.baidu.com/s/1IdnAKGMn5Jkc6ARSJzbmeA?pwd=kbq5 提取码: kbq5
