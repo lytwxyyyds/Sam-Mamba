@@ -8,7 +8,7 @@ The proposed SAM-Mamba architecture.
 ## Dataset
 - Download the corresponding dataset.
 ## Running
-- For training, modify the correct path:
+- For training:
 '''
     python train.py
 '''
