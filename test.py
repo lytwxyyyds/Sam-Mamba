@@ -87,19 +87,7 @@ class Inference(object):
             self.deep_model.load_state_dict(state_dict)
 
         self.deep_model.eval()
-    def canshu(self):
-        x1 = torch.randn(1, 3, 256, 256).cuda()
-        x2 = torch.randn(1, 3, 256, 256).cuda()
 
-        res = self.deep_model(x1, x2)
-        print(res[0].shape)
-
-        from thop import profile
-
-        # mmengine_flop_count(model, (3, 512, 512), show_table=True, show_arch=True)
-        flops1, params1 = profile(self.deep_model, inputs=(x1, x2))
-        print("flops=G", flops1)
-        print("parms=M", params1)
 
     def infer(self):
         torch.cuda.empty_cache()
@@ -143,75 +131,6 @@ class Inference(object):
               f'F1 score is {f1_score}, IoU is {iou}, Kappa coefficient is {kc}')
         print('Inference stage is done!')
 
-    def tezhen(self):
-        # 准备测试输入
-        img_path_1 = r"F:\lyt\levircd+\A\train_646_11.png"
-        img_path_2 = r"F:\lyt\levircd+\B\train_646_11.png"
-
-        # 定义图像预处理转换
-        transform = transforms.Compose([
-            transforms.ToTensor(),  # 转换为张量并归一化到 [0, 1]
-        ])
-
-        # 加载并预处理图像
-        x1 = transform(Image.open(img_path_1).convert('RGB')).unsqueeze(0).cuda()  # [1,3,H,W]
-        x2 = transform(Image.open(img_path_2).convert('RGB')).unsqueeze(0).cuda()
-
-        # 定义存储特征图的字典
-        features = {}
-
-        # 注册钩子函数
-        def get_features(name):
-            def hook(model, input, output):
-                features[name] = output.detach().cpu()
-
-            return hook
-
-        # 假设我们要提取解码器第一层(dec1)和编码器最后一层的特征
-        # 需要根据实际模型结构调整这些层名
-        target_layers = {
-            'decoder_first': self.deep_model.decoder.dec3,  # 解码器第一层
-        }
-
-        # 注册钩子
-        hooks = []
-        for name, layer in target_layers.items():
-            hook = layer.register_forward_hook(get_features(name))
-            hooks.append(hook)
-
-        # 前向传播获取特征图
-        with torch.no_grad():
-            _ = self.deep_model(x1, x2)
-
-        # 移除钩子
-        for hook in hooks:
-            hook.remove()
-
-        # 可视化和生成热力图
-        for name, feat in features.items():
-            print(f"{name}特征图形状: {feat.shape}")
-
-            # 上采样特征图为 256x256
-            upsampled_feat = F.interpolate(feat, size=(256, 256), mode='bilinear', align_corners=False)
-
-            # 可视化热力图：生成单通道热力图
-            # 选择第一个样本和一个通道来展示（例如通道0）
-            feature_map = upsampled_feat[0, 0].numpy()  # 取第一个样本，第一个通道
-
-            plt.figure(figsize=(10, 5))
-            # 使用 viridis 色标来显示热力图
-            plt.imshow(feature_map, cmap='viridis')
-            plt.title(f"{name}热力图 (上采样到256x256) - 通道0")
-            plt.colorbar()  # 显示颜色条
-            plt.axis('off')  # 关闭坐标轴
-
-            # 保存热力图
-            save_path = os.path.join(self.change_map_saved_path, f"{name}_heatmap.png")
-            plt.savefig(save_path, bbox_inches='tight')
-            plt.show()  # 显示图像
-            print(f"已保存{name}热力图到: {save_path}")
-
-        print("热力图生成完成")
 
 
 
